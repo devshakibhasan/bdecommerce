@@ -23,9 +23,9 @@ function AuthContent({ defaultMode }: { defaultMode?: 'login' | 'register' }) {
   
   // Form states
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('customer@example.com');
-  const [phone, setPhone] = useState('01712345678');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
