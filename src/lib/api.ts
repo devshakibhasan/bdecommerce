@@ -1,7 +1,7 @@
 import { useAuthStore } from './store';
 import { DataCache } from './dataCache';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.bdecommerce.inspireacademyy.com//api/v1';
 
 class ApiClient {
   private async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -36,7 +36,8 @@ class ApiClient {
       endpoint.startsWith('/payment-gateways') ||
       endpoint.startsWith('/size-guides') ||
       endpoint.startsWith('/product-types') ||
-      endpoint.startsWith('/brands')
+      endpoint.startsWith('/brands') ||
+      endpoint.startsWith('/pages')
     );
 
     if (token && !isPublicGet) {

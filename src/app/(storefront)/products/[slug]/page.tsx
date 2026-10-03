@@ -21,10 +21,15 @@ export default async function ProductPage({ params }: Props) {
   let product: Product | null = null;
 
   try {
+    const envUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '');
+    const internalUrl = process.env.INTERNAL_API_URL?.replace(/\/+$/, '');
     const urls = [
-      `http://127.0.0.1:8000/api/v1/products/${slug}`,
+      internalUrl ? `${internalUrl}/products/${slug}` : null,
+      envUrl ? `${envUrl}/products/${slug}` : null,
+      `https://api.bdecommerce.inspireacademyy.com/api/v1/products/${slug}`,
+      `https://api.bdecommerce.inspireacademyy.com//api/v1/products/${slug}`,
       `http://localhost:8000/api/v1/products/${slug}`
-    ];
+    ].filter(Boolean) as string[];
     
     for (const url of urls) {
       try {

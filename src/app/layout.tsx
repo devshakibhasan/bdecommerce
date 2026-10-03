@@ -62,10 +62,10 @@ export default function RootLayout({
         />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="http://localhost:8000" />
-        <link rel="dns-prefetch" href="http://localhost:8000" />
-        <link rel="preconnect" href="http://127.0.0.1:8000" />
-        <link rel="dns-prefetch" href="http://127.0.0.1:8000" />
+        <link rel="preconnect" href="https://api.bdecommerce.inspireacademyy.com/" />
+        <link rel="dns-prefetch" href="https://api.bdecommerce.inspireacademyy.com/" />
+        <link rel="preconnect" href="https://api.bdecommerce.inspireacademyy.com/" />
+        <link rel="dns-prefetch" href="https://api.bdecommerce.inspireacademyy.com/" />
       </head>
       <body suppressHydrationWarning className={`${hindSiliguri.variable} font-sans antialiased bg-background text-foreground`}>
         <Providers>{children}</Providers>

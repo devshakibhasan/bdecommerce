@@ -85,7 +85,7 @@ export default function AdminPagesPage() {
     queryKey: ['admin-pages'],
     queryFn: async () => {
       try {
-        const res: any = await api.get('/admin/pages');
+        const res: any = await api.get('/admin/pages?per_page=100');
         if (res?.data) {
           return Array.isArray(res.data) 
             ? res.data 
@@ -93,7 +93,7 @@ export default function AdminPagesPage() {
         }
       } catch (err) {
         try {
-          const pubRes: any = await api.get('/pages');
+          const pubRes: any = await api.get('/pages?per_page=100');
           if (pubRes?.data) {
             return Array.isArray(pubRes.data)
               ? pubRes.data

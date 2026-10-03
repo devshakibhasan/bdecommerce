@@ -106,46 +106,80 @@ const DEFAULT_HOMEPAGE_SECTIONS: PageSection[] = [
   },
 ];
 
-async function getHomepageSections(): Promise<PageSection[]> {
-  try {
-    const res = await fetch('http://127.0.0.1:8000/api/v1/content/homepage', {
-      cache: 'no-store',
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
+function getHomepageCandidates(): string[] {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, '') : null;
+  const internalUrl = process.env.INTERNAL_API_URL ? process.env.INTERNAL_API_URL.replace(/\/+$/, '') : null;
+  const prodUrl = 'https://api.bdecommerce.inspireacademyy.com/api/v1';
+  const localUrl = 'https://api.bdecommerce.inspireacademyy.com//api/v1';
 
-    if (res.ok) {
-      const json = await res.json();
-      const list = json?.data?.sections || json?.sections;
-      if (Array.isArray(list) && list.length > 0) {
-        return list;
+  const bases = [internalUrl, envUrl, prodUrl, localUrl].filter(Boolean) as string[];
+  const uniqueBases = Array.from(new Set(bases));
+
+  const list: string[] = [];
+  for (const b of uniqueBases) {
+    list.push(`${b}/content/homepage`);
+    list.push(`${b}/cms/pages/homepage`);
+  }
+  return list;
+}
+
+async function getHomepageSections(): Promise<PageSection[]> {
+  const urls = getHomepageCandidates();
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000);
+      const res = await fetch(url, {
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (res.ok) {
+        const json = await res.json();
+        const list = json?.data?.sections || json?.sections;
+        if (Array.isArray(list) && list.length > 0) {
+          return list;
+        }
       }
+    } catch (err) {
+      // Silenced fallback to next candidate or DEFAULT_HOMEPAGE_SECTIONS
     }
-  } catch (err) {
-    // Silenced fallback to DEFAULT_HOMEPAGE_SECTIONS
   }
 
   return DEFAULT_HOMEPAGE_SECTIONS;
 }
 
 export async function generateMetadata() {
-  try {
-    const res = await fetch('http://127.0.0.1:8000/api/v1/content/homepage', {
-      cache: 'no-store',
-      headers: { 'Accept': 'application/json' },
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const page = json?.data;
-      if (page) {
-        return {
-          title: page.seo_title || page.title_en || 'BD Shop - Best Online Shopping in Bangladesh',
-          description: page.seo_description || 'Shop Men, Women, Kids fashion, shoes, and accessories with Cash on Delivery and bKash across 64 districts in Bangladesh.',
-        };
+  const urls = getHomepageCandidates();
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000);
+      const res = await fetch(url, {
+        cache: 'no-store',
+        headers: { 'Accept': 'application/json' },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (res.ok) {
+        const json = await res.json();
+        const page = json?.data;
+        if (page) {
+          return {
+            title: page.seo_title || page.title_en || 'BD Shop - Best Online Shopping in Bangladesh',
+            description: page.seo_description || 'Shop Men, Women, Kids fashion, shoes, and accessories with Cash on Delivery and bKash across 64 districts in Bangladesh.',
+          };
+        }
       }
-    }
-  } catch (err) {}
+    } catch (err) {}
+  }
 
   return {
     title: 'BD Shop - Best Online Shopping in Bangladesh',

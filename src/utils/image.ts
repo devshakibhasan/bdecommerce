@@ -32,7 +32,7 @@ export function formatImageUrl(
 
   // Backend uploads folder path (/uploads/products/...)
   if (path.startsWith('/uploads/')) {
-    const backendHost = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000';
+    const backendHost = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.bdecommerce.inspireacademyy.com/';
     finalUrl = `${backendHost}${path}`;
   }
 

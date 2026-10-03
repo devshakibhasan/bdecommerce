@@ -1599,11 +1599,11 @@ export default function MarketingPage() {
                   <input
                     type="text"
                     readOnly
-                    value={`${typeof window !== 'undefined' ? window.location.origin.replace('3000', '8000') : 'http://127.0.0.1:8000'}/api/v1/webhooks/meta`}
+                    value={`${typeof window !== 'undefined' ? window.location.origin.replace('3000', '8000') : 'https://api.bdecommerce.inspireacademyy.com/'}/api/v1/webhooks/meta`}
                     className="flex-1 p-2 neu-input rounded-xl text-xs font-mono font-bold"
                   />
                   <button
-                    onClick={() => copyToClipboard(`${typeof window !== 'undefined' ? window.location.origin.replace('3000', '8000') : 'http://127.0.0.1:8000'}/api/v1/webhooks/meta`, 'Webhook URL')}
+                    onClick={() => copyToClipboard(`${typeof window !== 'undefined' ? window.location.origin.replace('3000', '8000') : 'https://api.bdecommerce.inspireacademyy.com/'}/api/v1/webhooks/meta`, 'Webhook URL')}
                     className="p-2 neu-btn rounded-xl text-primary hover:bg-primary/10"
                     title="Copy URL"
                   >
