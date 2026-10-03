@@ -80,6 +80,52 @@ export default function LostCustomersAdminPage() {
       params.append('per_page', String(perPage));
 
       const res: any = await api.get(`/admin/lost-customers?${params.toString()}`);
+
+      // Robust compatibility: If on 'All Leads' but server returned only unconverted leads
+      if (
+        statusFilter === 'all' && 
+        !searchQuery &&
+        res?.stats?.converted_leads > 0 && 
+        Array.isArray(res?.data) &&
+        res.data.length < (res.stats.total_leads || 0) &&
+        !res.data.some((item: any) => item.status === 'converted')
+      ) {
+        try {
+          const convertedParams = new URLSearchParams();
+          convertedParams.append('status', 'converted');
+          convertedParams.append('page', '1');
+          convertedParams.append('per_page', String(perPage));
+          const convertedRes: any = await api.get(`/admin/lost-customers?${convertedParams.toString()}`);
+          const convertedItems = Array.isArray(convertedRes?.data) ? convertedRes.data : [];
+
+          const seen = new Set(res.data.map((l: any) => l.id));
+          const merged = [...res.data];
+          for (const item of convertedItems) {
+            if (!seen.has(item.id)) {
+              seen.add(item.id);
+              merged.push(item);
+            }
+          }
+
+          merged.sort((a, b) => {
+            const timeA = new Date(a.last_activity_at || a.created_at || 0).getTime();
+            const timeB = new Date(b.last_activity_at || b.created_at || 0).getTime();
+            return timeB - timeA;
+          });
+
+          return {
+            ...res,
+            data: merged,
+            meta: {
+              ...(res.meta || {}),
+              total: Math.max(res?.meta?.total || 0, merged.length, res?.stats?.total_leads || 0),
+            }
+          };
+        } catch {
+          // Graceful fallback
+        }
+      }
+
       return res;
     },
     refetchInterval: 10000,
