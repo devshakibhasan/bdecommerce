@@ -60,19 +60,24 @@ export default function LostCustomersAdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(50);
   const [selectedLead, setSelectedLead] = useState<LostCustomerLead | null>(null);
   const [notesModalLead, setNotesModalLead] = useState<LostCustomerLead | null>(null);
   const [noteContent, setNoteContent] = useState('');
 
   // Fetch leads and statistics
   const { data: responseData, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ['admin-lost-customers', searchQuery, statusFilter, page],
+    queryKey: ['admin-lost-customers', searchQuery, statusFilter, page, perPage],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
-      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+      if (statusFilter && statusFilter !== 'all') {
+        params.append('status', statusFilter);
+      } else {
+        params.append('status', 'all');
+      }
       params.append('page', String(page));
-      params.append('per_page', '15');
+      params.append('per_page', String(perPage));
 
       const res: any = await api.get(`/admin/lost-customers?${params.toString()}`);
       return res;
@@ -88,7 +93,9 @@ export default function LostCustomersAdminPage() {
     total_leads: 0,
     abandoned_leads: 0,
     contacted_leads: 0,
+    call_scheduled_leads: 0,
     converted_leads: 0,
+    not_interested_leads: 0,
     abandoned_value: 0,
     converted_value: 0,
   };
@@ -337,12 +344,12 @@ export default function LostCustomersAdminPage() {
           {/* Status Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 text-xs font-medium">
             {[
-              { id: 'all', label: 'All Leads' },
-              { id: 'abandoned', label: 'Abandoned' },
-              { id: 'contacted', label: 'Contacted' },
-              { id: 'call_scheduled', label: 'Call Scheduled' },
-              { id: 'converted', label: 'Converted' },
-              { id: 'not_interested', label: 'Not Interested' },
+              { id: 'all', label: 'All Leads', count: stats.total_leads },
+              { id: 'abandoned', label: 'Abandoned', count: stats.abandoned_leads },
+              { id: 'contacted', label: 'Contacted', count: stats.contacted_leads },
+              { id: 'call_scheduled', label: 'Call Scheduled', count: (stats as any).call_scheduled_leads },
+              { id: 'converted', label: 'Converted', count: stats.converted_leads },
+              { id: 'not_interested', label: 'Not Interested', count: (stats as any).not_interested_leads },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -350,13 +357,22 @@ export default function LostCustomersAdminPage() {
                   setStatusFilter(tab.id);
                   setPage(1);
                 }}
-                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                   statusFilter === tab.id
                     ? 'bg-primary text-white font-semibold shadow-xs'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                {tab.label}
+                <span>{tab.label}</span>
+                {typeof tab.count === 'number' && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    statusFilter === tab.id 
+                      ? 'bg-white/20 text-white' 
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -631,12 +647,30 @@ export default function LostCustomersAdminPage() {
           </div>
         )}
 
-        {/* Pagination Controls */}
-        {meta.last_page > 1 && (
-          <div className="p-4 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-            <div>
-              Showing page <span className="font-bold text-slate-900 dark:text-white">{meta.current_page}</span> of {meta.last_page} ({meta.total} total leads)
+        {/* Pagination & Results Summary Controls */}
+        <div className="p-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-3">
+            <span>
+              Showing <span className="font-bold text-slate-900 dark:text-white">{leads.length}</span> of {meta.total ?? stats.total_leads} leads
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400">Per page:</span>
+              <select
+                value={perPage}
+                onChange={(e) => {
+                  setPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
+                className="px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold focus:outline-hidden"
+              >
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
             </div>
+          </div>
+          {meta.last_page > 1 && (
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -645,6 +679,9 @@ export default function LostCustomersAdminPage() {
               >
                 Previous
               </button>
+              <span className="px-2 font-bold text-slate-900 dark:text-white">
+                {meta.current_page} / {meta.last_page}
+              </span>
               <button
                 onClick={() => setPage((p) => Math.min(meta.last_page, p + 1))}
                 disabled={meta.current_page >= meta.last_page}
@@ -653,8 +690,8 @@ export default function LostCustomersAdminPage() {
                 Next
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Follow-up Notes Modal */}
