@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="400" height="350">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="400" height="350" rx="16" fill="url(#bg)"/>
+  <circle cx="200" cy="160" r="120" fill="#ffffff" opacity="0.05"/>
+  <g filter="url(#shadow)">
+    <rect x="110" y="90" width="180" height="115" rx="8" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
+           <rect x="120" y="100" width="160" height="95" rx="4" fill="#0f172a"/>
+           <path d="M90 205 L310 205 L300 215 L100 215 Z" fill="#94a3b8"/>
+           <text x="200" y="155" font-family="Arial" font-size="16" font-weight="bold" fill="#f8fafc" text-anchor="middle">M3 AIR</text>
+  </g>
+  <rect x="20" y="295" width="360" height="40" rx="8" fill="#000000" opacity="0.4"/>
+  <text x="200" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">MacBook Air 15" M3</text>
+  <text x="200" y="328" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Apple M3 | Liquid Retina</text>
+</svg>

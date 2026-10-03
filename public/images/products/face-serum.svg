@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="400" height="350">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#431407"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="400" height="350" rx="16" fill="url(#bg)"/>
+  <circle cx="200" cy="160" r="120" fill="#ffffff" opacity="0.05"/>
+  <g filter="url(#shadow)">
+    <rect x="165" y="110" width="70" height="130" rx="10" fill="#c2410c" stroke="#fdba74" stroke-width="3"/>
+           <rect x="185" y="70" width="30" height="40" rx="4" fill="#ea580c"/>
+           <circle cx="200" cy="65" r="10" fill="#fff"/>
+           <rect x="172" y="140" width="56" height="60" rx="4" fill="#fff7ed"/>
+           <text x="200" y="165" font-family="Arial" font-size="10" font-weight="bold" fill="#9a3412" text-anchor="middle">VITAMIN C</text>
+           <text x="200" y="185" font-family="Arial" font-size="8" fill="#c2410c" text-anchor="middle">GLOW SERUM</text>
+  </g>
+  <rect x="20" y="295" width="360" height="40" rx="8" fill="#000000" opacity="0.4"/>
+  <text x="200" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Vitamin C Glow Face Serum</text>
+  <text x="200" y="328" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Hyaluronic Acid + Niacinamide (30ml)</text>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="400" height="350">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="400" height="350" rx="16" fill="url(#bg)"/>
+  <circle cx="200" cy="160" r="120" fill="#ffffff" opacity="0.05"/>
+  <g filter="url(#shadow)">
+    <path d="M150 80 L180 110 L220 110 L250 80 L270 120 L240 135 L245 270 L155 270 L160 135 L130 120 Z" fill="#f8fafc" stroke="#3b82f6" stroke-width="3"/>
+           <path d="M190 110 L210 110 L205 180 L195 180 Z" fill="#1e3a8a"/>
+           <circle cx="200" cy="125" r="3" fill="#fbbf24"/>
+           <circle cx="200" cy="145" r="3" fill="#fbbf24"/>
+           <circle cx="200" cy="165" r="3" fill="#fbbf24"/>
+           <path d="M175 110 Q200 130 225 110" fill="none" stroke="#fbbf24" stroke-width="2"/>
+           <text x="200" y="250" font-family="Arial" font-size="11" font-weight="bold" fill="#1e3a8a" text-anchor="middle">EXCLUSIVE PANJABI</text>
+  </g>
+  <rect x="20" y="295" width="360" height="40" rx="8" fill="#000000" opacity="0.4"/>
+  <text x="200" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Premium Cotton Panjabi</text>
+  <text x="200" y="328" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Handcrafted Embroidery | White & Blue</text>
+</svg>

@@ -1,0 +1,293 @@
+﻿
+'use client';
+
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import { 
+  Building2, ShoppingBag, Plus, ArrowRight, FileText, CheckCircle2, User, PackagePlus, Loader2
+} from 'lucide-react';
+import { formatBDT } from '@/utils/currency';
+import toast from 'react-hot-toast';
+import { Modal } from '@/components/admin/Modal';
+import Link from 'next/link';
+
+
+export default function PurchasesPage() {
+  const queryClient = useQueryClient();
+    const [activeTab, setActiveTab] = useState<'orders' | 'suppliers'>('orders');
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [supplierForm, setSupplierForm] = useState({ name: '', contact_person: '', phone: '', email: '', address: '' 
+});
+
+  const createSupplier = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await api.post('/admin/purchases/suppliers', data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('Supplier added!');
+      setIsSupplierModalOpen(false);
+      setSupplierForm({ name: '', contact_person: '', phone: '', email: '', address: '' });
+      queryClient.invalidateQueries({ queryKey: ['admin-suppliers'] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to create supplier');
+    }
+  });
+
+
+  const { data: suppliers = [], isLoading: isSuppliersLoading } = useQuery({
+    queryKey: ['admin-suppliers'],
+    queryFn: async () => {
+      const res: any = await api.get('/admin/purchases/suppliers');
+      return res.data;
+    }
+  });
+
+  const { data: orders = [], isLoading: isOrdersLoading } = useQuery({
+    queryKey: ['admin-purchases-orders'],
+    queryFn: async () => {
+      const res: any = await api.get('/admin/purchases/orders');
+      return res.data;
+    }
+  });
+
+  const receiveMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res: any = await api.post(`/admin/purchases/orders/${id}/receive`);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('PO received & stock updated!');
+      queryClient.invalidateQueries({ queryKey: ['admin-purchases-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-suppliers'] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to receive PO');
+    }
+  });
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-6 pb-16">
+      <div className="clay-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center 
+gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 neu-inset rounded-2xl flex items-center justify-center text-indigo-600 font-black">
+            <ShoppingBag className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Procurement & Purchases</h1>
+            <p className="text-xs text-muted-foreground font-medium">
+              Manage suppliers, create purchase orders, and receive goods.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 border-b border-border">
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === 'orders' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground 
+hover:text-foreground'
+          }`}
+        >
+          Purchase Orders
+        </button>
+        <button
+          onClick={() => setActiveTab('suppliers')}
+          className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === 'suppliers' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground 
+hover:text-foreground'
+          }`}
+        >
+          Suppliers Directory
+        </button>
+      
+
+      {activeTab === 'orders' && (
+        <div className="clay-card rounded-3xl overflow-hidden">
+          <div className="p-4 border-b border-border bg-muted/30 flex justify-between items-center">
+            <h3 className="text-sm font-black text-foreground flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" />
+              <span>Purchase Orders (PO)</span>
+            </h3>
+            <Link href="/admin/purchases/create" className="neu-btn-primary px-3 py-1.5 rounded-xl text-xs font-bold 
+flex items-center gap-1">
+              <Plus className="w-3 h-3" /> New PO
+            </Link>
+          </div>
+          {isOrdersLoading ? (
+            <div className="p-8 text-center text-muted-foreground animate-pulse font-semibold">Loading orders...</div>
+          ) : orders?.length === 0 ? (
+            <div className="p-12 text-center flex flex-col items-center">
+              <PackagePlus className="w-12 h-12 text-muted-foreground/50 mb-3" />
+              <h3 className="text-lg font-black text-foreground">No Purchase Orders Yet</h3>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
+                  <tr>
+                    <th className="px-6 py-4 font-bold">PO Number</th>
+                    <th className="px-6 py-4 font-bold">Supplier</th>
+                    <th className="px-6 py-4 font-bold">Date</th>
+                    <th className="px-6 py-4 font-bold text-right">Amount</th>
+                    <th className="px-6 py-4 font-bold text-center">Status</th>
+                    <th className="px-6 py-4 font-bold text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {orders?.map((po: any) => (
+                    <tr key={po.id} className="hover:bg-muted/20 transition-colors">
+                      <td className="px-6 py-4 font-bold text-foreground">
+                        {po.po_number}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-primary">{po.supplier?.name}</div>
+                      </td>
+                      <td className="px-6 py-4 text-muted-foreground">
+                        {new Date(po.order_date).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-right font-black text-foreground">
+                        {formatBDT(po.total_amount)}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                          po.status === 'received' ? 'bg-primary/20 text-primary' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {po.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {po.status !== 'received' && (
+                          <button 
+                            onClick={() => {
+                              if(confirm('Receive all goods and update stock ledger?')) receiveMutation.mutate(po.id);
+                            }}
+                            disabled={receiveMutation.isPending}
+                            className="text-[10px] neu-btn-primary px-3 py-1.5 rounded-xl font-bold flex items-center 
+justify-center gap-1 mx-auto"
+                          >
+                            <ArrowRight className="w-3 h-3" /> Receive Goods (GRN)
+                          </button>
+                        )}
+                        {po.status === 'received' && (
+                          <span className="text-primary font-bold text-[10px] flex items-center justify-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Received
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'suppliers' && (
+        <div className="clay-card rounded-3xl overflow-hidden">
+          <div className="p-4 border-b border-border bg-muted/30 flex justify-between items-center">
+            <h3 className="text-sm font-black text-foreground flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-primary" />
+              <span>Registered Suppliers</span>
+            </h3>
+            <button onClick={() => setIsSupplierModalOpen(true)} className="neu-btn-primary px-3 py-1.5 rounded-xl 
+text-xs font-bold flex items-center gap-1">
+              <Plus className="w-3 h-3" /> Add Supplier
+            </button>
+          </div>
+          {isSuppliersLoading ? (
+            <div className="p-8 text-center text-muted-foreground animate-pulse font-semibold">Loading 
+suppliers...</div>
+          ) : suppliers?.length === 0 ? (
+            <div className="p-12 text-center flex flex-col items-center">
+              <User className="w-12 h-12 text-muted-foreground/50 mb-3" />
+              <h3 className="text-lg font-black text-foreground">No Suppliers</h3>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
+                  <tr>
+                    <th className="px-6 py-4 font-bold">Supplier Name</th>
+                    <th className="px-6 py-4 font-bold">Contact</th>
+                    <th className="px-6 py-4 font-bold text-center">Active Orders</th>
+                    <th className="px-6 py-4 font-bold text-right">Payable Balance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {suppliers?.map((sup: any) => (
+                    <tr key={sup.id} className="hover:bg-muted/20 transition-colors">
+                      <td className="px-6 py-4 font-bold text-foreground">
+                        {sup.name}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-xs">{sup.contact_person || 'N/A'}</div>
+                        <div className="text-[10px] text-muted-foreground font-mono">{sup.phone || sup.email || 
+''}</div>
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold">
+                        {sup.active_orders_count || 0}
+                      </td>
+                      <td className="px-6 py-4 text-right font-black text-rose-600">
+                        {formatBDT(sup.ledger_balance)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Supplier Modal */}
+      <Modal isOpen={isSupplierModalOpen} onClose={() => setIsSupplierModalOpen(false)} title="Add New Supplier">
+        <form onSubmit={(e) => { e.preventDefault(); createSupplier.mutate(supplierForm); }} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Supplier Name *</label>
+            <input required type="text" value={supplierForm.name} onChange={e => setSupplierForm({...supplierForm, 
+name: e.target.value})} className="w-full mt-1 px-3 py-2 rounded-xl text-sm border-slate-200 dark:border-slate-800 
+bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all" />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Contact Person</label>
+            <input type="text" value={supplierForm.contact_person} onChange={e => setSupplierForm({...supplierForm, 
+contact_person: e.target.value})} className="w-full mt-1 px-3 py-2 rounded-xl text-sm border-slate-200 
+dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Phone</label>
+              <input type="text" value={supplierForm.phone} onChange={e => setSupplierForm({...supplierForm, phone: 
+e.target.value})} className="w-full mt-1 px-3 py-2 rounded-xl text-sm border-slate-200 dark:border-slate-800 
+bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all" />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Email</label>
+              <input type="email" value={supplierForm.email} onChange={e => setSupplierForm({...supplierForm, email: 
+e.target.value})} className="w-full mt-1 px-3 py-2 rounded-xl text-sm border-slate-200 dark:border-slate-800 
+bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all" />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Address</label>
+            <textarea value={supplierForm.address} onChange={e => setSupplierForm({...supplierForm, address: 
+e.target.value})} className="w-full mt-1 px-3 py-2 rounded-xl text-sm border-slate-200 dark:border-slate-800 
+bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/50 outline-none transition-all min-h-[80px]" />
+          </div>
+          <button disabled={createSupplier.isPending} type="submit" className="w-full neu-btn-primary py-3 rounded-xl 
+font-bold flex items-center justify-center gap-2">
+            {createSupplier.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Supplier'}
+          </button>
+        </form>
+      </Modal>
+    </div>
+  );
+}
+
+

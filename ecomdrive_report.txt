@@ -1,0 +1,12 @@
+--- ECOMDRIVE BD PORTAL FEATURES ---
+
+### Menu: Go to Dashboard
+URL: https://portal.ecomdrivebd.com/post-login
+Headings/Data: Sign in to Ecomdrive
+Actions/Buttons: Continue with Google | Continue
+
+### Menu: V2-তে নতুন কী এসেছে দেখুন
+URL: https://portal.ecomdrivebd.com/whats-new
+Headings/Data: Sign in to Ecomdrive
+Actions/Buttons: Continue with Google | Continue
+

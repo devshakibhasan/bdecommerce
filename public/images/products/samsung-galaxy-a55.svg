@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="400" height="350">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="400" height="350" rx="16" fill="url(#bg)"/>
+  <circle cx="200" cy="160" r="120" fill="#ffffff" opacity="0.05"/>
+  <g filter="url(#shadow)">
+    <rect x="150" y="80" width="100" height="200" rx="16" fill="#1e293b" stroke="#60a5fa" stroke-width="4"/>
+           <circle cx="200" cy="100" r="4" fill="#60a5fa"/>
+           <rect x="160" y="115" width="80" height="135" rx="6" fill="#0f172a"/>
+           <circle cx="180" cy="140" r="10" fill="#3b82f6" opacity="0.8"/>
+           <circle cx="180" cy="170" r="10" fill="#3b82f6" opacity="0.8"/>
+           <circle cx="180" cy="200" r="10" fill="#3b82f6" opacity="0.8"/>
+           <text x="200" y="240" font-family="Arial" font-size="9" fill="#93c5fd" text-anchor="middle">5G SUPER AMOLED</text>
+  </g>
+  <rect x="20" y="295" width="360" height="40" rx="8" fill="#000000" opacity="0.4"/>
+  <text x="200" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Samsung Galaxy A55 5G</text>
+  <text x="200" y="328" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">50MP OIS | 120Hz AMOLED</text>
+</svg>
