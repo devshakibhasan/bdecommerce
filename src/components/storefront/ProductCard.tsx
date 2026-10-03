@@ -65,12 +65,12 @@ const ProductCardInner = React.memo(function ProductCard({ product }: ProductCar
           {/* Discount & Featured Chips */}
           <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex flex-col gap-1.5 pointer-events-none">
             {discountPercent > 0 && (
-              <span className="neu-chip bg-destructive text-destructive-foreground text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-lg shadow-sm">
+              <span className="inline-flex items-center justify-center bg-rose-600 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-lg shadow-md leading-tight">
                 -{discountPercent}%
               </span>
             )}
-            {product.is_featured && (
-              <span className="neu-chip bg-primary text-primary-foreground text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
+            {Boolean(product.is_featured) && (
+              <span className="inline-flex items-center justify-center bg-amber-500 text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-lg shadow-md tracking-wider uppercase leading-tight">
                 HOT
               </span>
             )}

@@ -168,7 +168,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         <div className="lg:col-span-6 flex flex-col gap-4">
           <div className="neu-flat rounded-3xl p-6 aspect-square flex items-center justify-center relative overflow-hidden">
             {discountPercent > 0 && (
-              <span className="absolute top-6 left-6 neu-chip bg-destructive text-destructive-foreground text-xs font-black px-3 py-1 rounded-xl shadow">
+              <span className="absolute top-6 left-6 inline-flex items-center justify-center bg-rose-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                 -{discountPercent}% OFF
               </span>
             )}

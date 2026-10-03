@@ -838,6 +838,17 @@ html {
   background-color: rgba(16, 185, 129, 0.7);
 }
 
+/* Hide Netlify Drawer / Injected Badge */
+#netlify-badge,
+iframe#netlify-drawer,
+iframe[title*="Netlify"],
+[data-netlify-drawer],
+.netlify-feedback-drawer {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 @media print {
   @page {
     margin: 8mm 10mm;
