@@ -12,16 +12,11 @@ import {
   ShoppingBag, CheckCircle2
 } from 'lucide-react';
 import { useUIStore, useAuthStore, useCartStore, useLocaleStore } from '@/lib/store';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import { DataCache } from '@/lib/dataCache';
 import { t } from '@/lib/i18n';
 import toast from 'react-hot-toast';
-
-const CATEGORY_SHORTCUTS = [
-  { nameEn: 'Men', nameBn: 'পুরুষ', slug: 'men', icon: '👔' },
-  { nameEn: 'Women', nameBn: 'মহিলা', slug: 'women', icon: '👗' },
-  { nameEn: 'Kids', nameBn: 'বাচ্চা', slug: 'kids', icon: '👕' },
-  { nameEn: 'Shoes', nameBn: 'জুতো', slug: 'shoes', icon: '👠' },
-  { nameEn: 'Accessories', nameBn: 'অ্যাক্সেসরিজ', slug: 'accessories', icon: '🕶️' },
-];
 
 export function MobileSidebar() {
   const [mounted, setMounted] = useState(false);
@@ -34,6 +29,33 @@ export function MobileSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories-catalog-v12'],
+    queryFn: async () => {
+      try {
+        const res: any = await api.get('/categories');
+        const items = res?.data?.items || res?.data?.data || (Array.isArray(res?.data) ? res.data : []);
+        return Array.isArray(items) ? items : [];
+      } catch {
+        return [];
+      }
+    },
+    initialData: () => DataCache.getInitialData('/categories') || [],
+  });
+
+  const rootCategories = (Array.isArray(categoriesData) && categoriesData.length > 0)
+    ? categoriesData.filter((c: any) => !c.parent_id).map((c: any) => ({
+        nameEn: c.name_en || c.name || 'Category',
+        nameBn: c.name_bn || c.name_en || 'ক্যাটাগরি',
+        slug: c.slug || String(c.id),
+        icon: c.icon || (c.slug === 'men' ? '👔' : c.slug === 'women' ? '👗' : c.slug === 'kids' ? '🧸' : '🏷️'),
+      }))
+    : [
+        { nameEn: 'Men', nameBn: 'পুরুষ', slug: 'men', icon: '👔' },
+        { nameEn: 'Women', nameBn: 'মহিলা', slug: 'women', icon: '👗' },
+        { nameEn: 'Kids', nameBn: 'বাচ্চা', slug: 'kids', icon: '🧸' },
+      ];
 
   useEffect(() => {
     setMounted(true);
@@ -286,16 +308,16 @@ export function MobileSidebar() {
                     All →
                   </Link>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {CATEGORY_SHORTCUTS.map((cat) => (
+                <div className="grid grid-cols-3 gap-1.5">
+                  {rootCategories.map((cat) => (
                     <Link
                       key={cat.slug}
                       href={`/products?category=${cat.slug}`}
                       onClick={closeSidebar}
-                      className="p-2 bg-slate-50 dark:bg-[#161d2a] border border-slate-200 dark:border-slate-800 rounded-xl flex items-center gap-2 hover:border-primary/40 transition-colors shadow-xs"
+                      className="p-2 bg-slate-50 dark:bg-[#161d2a] border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:border-primary/40 transition-colors shadow-xs"
                     >
-                      <span className="text-sm">{cat.icon}</span>
-                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">
+                      <span className="text-base">{cat.icon}</span>
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate max-w-full">
                         {mounted && locale === 'bn' ? cat.nameBn : cat.nameEn}
                       </span>
                     </Link>
