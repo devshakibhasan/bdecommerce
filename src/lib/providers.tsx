@@ -10,22 +10,10 @@ import { DynamicThemeApplier } from '@/components/theme/DynamicThemeApplier';
 function ThemeInitializer() {
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('ui-storage');
-      let theme = null;
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        theme = parsed?.state?.theme;
-      }
-      if (!theme) {
-        theme = localStorage.getItem('theme');
-      }
-      if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
     } catch (e) {}
   }, []);
 

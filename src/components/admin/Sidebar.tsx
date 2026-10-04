@@ -287,15 +287,6 @@ export function Sidebar() {
           <ArrowLeft size={15} className="flex-shrink-0 text-slate-400" />
           {!isCollapsed && <span>View Storefront</span>}
         </Link>
-
-        <button 
-          onClick={toggleTheme}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors w-full font-bold cursor-pointer"
-          title={isCollapsed ? 'Toggle Theme' : undefined}
-        >
-          {theme === 'light' ? <Moon size={15} className="text-slate-400" /> : <Sun size={15} className="text-amber-400" />}
-          {!isCollapsed && <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>}
-        </button>
         
         <div className="flex items-center gap-2.5 px-2.5 py-2 mt-1 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
           <div className="w-7 h-7 rounded-xl bg-primary/20 dark:bg-primary/10/60 text-primary dark:text-primary flex items-center justify-center font-black text-xs flex-shrink-0 border border-primary/30 dark:border-primary/80">

@@ -41,6 +41,7 @@ export function Footer() {
   ];
 
   const quickLinks = settings?.footer_quick_links || [
+    { name: 'Exclusive Deals 🔥', href: '/p/exclusive-offer' },
     { name: 'All Products', href: '/products' },
     { name: 'Categories', href: '/categories' },
     { name: 'Shopping Cart', href: '/cart' },

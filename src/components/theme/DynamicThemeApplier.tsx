@@ -47,10 +47,8 @@ export function DynamicThemeApplier() {
       root.style.removeProperty('--ring');
     }
 
-    // Apply Theme Mode (Syncs with Store & UI)
-    if (settings.theme_mode) {
-      setTheme(settings.theme_mode);
-    }
+    // Always maintain light mode
+    setTheme('light');
   }, [settings, setTheme]);
 
   return null;

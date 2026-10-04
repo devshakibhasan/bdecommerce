@@ -19,10 +19,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f1f5f9' },
-    { media: '(prefers-color-scheme: dark)', color: '#111622' },
-  ],
+  themeColor: '#f1f5f9',
 };
 
 export default function RootLayout({
@@ -31,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="light">
       <head>
         <script
           suppressHydrationWarning
@@ -39,22 +36,10 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var stored = localStorage.getItem('ui-storage');
-                  var theme = null;
-                  if (stored) {
-                    var parsed = JSON.parse(stored);
-                    theme = parsed && parsed.state && parsed.state.theme;
-                  }
-                  if (!theme) {
-                    theme = localStorage.getItem('theme');
-                  }
-                  if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.setAttribute('data-theme', 'light');
-                  }
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.classList.add('light');
+                  document.documentElement.setAttribute('data-theme', 'light');
+                  localStorage.setItem('theme', 'light');
                 } catch (e) {}
               })();
             `

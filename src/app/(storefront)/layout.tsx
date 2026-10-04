@@ -24,7 +24,7 @@ export default function StorefrontLayout({
 
       <MobileSidebar />
 
-      <main className="flex-1 pb-16 lg:pb-0">{children}</main>
+      <main className="flex-1 pb-16 lg:pb-0 w-full overflow-x-hidden">{children}</main>
 
       <div className="print:hidden">
         <Footer />

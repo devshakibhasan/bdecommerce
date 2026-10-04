@@ -355,48 +355,31 @@ export const useUIStore = create<UIState>()(
       toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
       openSidebar: () => set({ isSidebarOpen: true }),
       closeSidebar: () => set({ isSidebarOpen: false }),
-      setTheme: (theme) => {
+      setTheme: (_theme) => {
         if (typeof window !== 'undefined') {
           try {
-            localStorage.setItem('theme', theme);
-            const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (isDark) {
-              document.documentElement.classList.add('dark');
-              document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-              document.documentElement.setAttribute('data-theme', 'light');
-            }
+            localStorage.setItem('theme', 'light');
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.documentElement.setAttribute('data-theme', 'light');
           } catch (e) {}
         }
-        set({ theme });
+        set({ theme: 'light' });
       },
       toggleTheme: () => {
-        const current = get().theme;
-        const next = current === 'dark' ? 'light' : 'dark';
-        get().setTheme(next);
-        
-        const user = useAuthStore.getState().user;
-        const isSuper = user?.roles?.some((r) => typeof r === 'string' && r.toLowerCase().includes('admin'));
-        if (isSuper && typeof window !== 'undefined') {
-          import('@/lib/api').then(({ api }) => {
-            api.put('/admin/settings', { theme_mode: next }).catch(() => {});
-          });
-        }
+        get().setTheme('light');
       },
     }),
     {
       name: 'ui-storage',
       onRehydrateStorage: () => (state) => {
-        if (state && typeof window !== 'undefined') {
+        if (typeof window !== 'undefined') {
           try {
-            if (state.theme === 'dark' || (state.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark');
-              document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-              document.documentElement.setAttribute('data-theme', 'light');
-            }
+            localStorage.setItem('theme', 'light');
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.documentElement.setAttribute('data-theme', 'light');
+            if (state) state.theme = 'light';
           } catch (e) {}
         }
       },

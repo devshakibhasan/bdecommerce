@@ -155,7 +155,7 @@ export function SingleProductFunnel({ pageData }: SingleProductFunnelProps) {
       ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-20 w-full overflow-x-hidden">
       {/* Top Floating Urgency Header */}
       <div className="bg-gradient-to-r from-red-600 via-primary to-primary text-white py-2.5 px-4 text-center text-xs sm:text-sm font-bold shadow-md sticky top-0 z-40 flex items-center justify-center gap-2">
         <Flame className="w-4 h-4 animate-bounce text-amber-300" />

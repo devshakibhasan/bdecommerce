@@ -379,32 +379,14 @@ export function MobileSidebar() {
             {/* Bottom Utilities (Theme, Language, Helpline) */}
             <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/95 dark:bg-[#161d2a]/95 backdrop-blur-md space-y-2.5 flex-shrink-0">
               
-              <div className="grid grid-cols-2 gap-2">
-                {/* Theme Switcher */}
-                <button
-                  onClick={toggleTheme}
-                  className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 text-slate-800 dark:text-slate-200 hover:border-primary cursor-pointer shadow-xs transition-colors"
-                >
-                  {mounted && theme === 'dark' ? (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Light Mode</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-indigo-500" />
-                      <span>Dark Mode</span>
-                    </>
-                  )}
-                </button>
-
+              <div>
                 {/* Language Switcher */}
                 <button
                   onClick={() => setLocale(locale === 'en' ? 'bn' : 'en')}
-                  className="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-black flex items-center justify-center gap-1.5 text-slate-800 dark:text-slate-200 hover:border-primary cursor-pointer shadow-xs transition-colors"
+                  className="w-full p-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-black flex items-center justify-center gap-2 text-slate-800 hover:border-primary cursor-pointer shadow-xs transition-colors"
                 >
                   <span>🌐</span>
-                  <span>{mounted && locale === 'bn' ? 'English' : 'বাংলা'}</span>
+                  <span>{mounted && locale === 'bn' ? 'Switch to English' : 'বাংলায় দেখুন'}</span>
                 </button>
               </div>
 

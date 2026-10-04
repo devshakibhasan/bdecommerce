@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
@@ -111,6 +111,7 @@ export function Header() {
 
   const defaultNavLinks = [
     { href: '/', labelKey: 'nav.home', labelEn: 'Home', labelBn: 'হোম' },
+    { href: '/p/exclusive-offer', labelKey: 'nav.exclusive_deals', labelEn: 'Exclusive Deals', labelBn: 'এক্সক্লুসিভ অফার', isHot: true },
     { href: '/products', labelKey: 'nav.products', labelEn: 'All Products', labelBn: 'সকল পণ্য' },
     { href: '/products?category=men', labelKey: 'nav.men', labelEn: 'Men', labelBn: 'পুরুষ' },
     { href: '/products?category=women', labelKey: 'nav.women', labelEn: 'Women', labelBn: 'মহিলা' },
@@ -119,7 +120,23 @@ export function Header() {
     { href: '/track', labelKey: 'nav.track_order', labelEn: 'Track Order', labelBn: 'অর্ডার ট্র্যাকিং' },
   ];
 
-  const navLinks = settings?.header_nav_links || defaultNavLinks;
+  const rawNavLinks = settings?.header_nav_links || defaultNavLinks;
+  const navLinks = useMemo(() => {
+    if (!Array.isArray(rawNavLinks)) return defaultNavLinks;
+    const hasExclusive = rawNavLinks.some((l: any) => l.href === '/p/exclusive-offer');
+    if (!hasExclusive) {
+      const copy = [...rawNavLinks];
+      copy.splice(1, 0, {
+        href: '/p/exclusive-offer',
+        labelKey: 'nav.exclusive_deals',
+        labelEn: 'Exclusive Deals',
+        labelBn: 'এক্সক্লুসিভ অফার',
+        isHot: true,
+      });
+      return copy;
+    }
+    return rawNavLinks;
+  }, [rawNavLinks]);
   const siteName = settings?.header_logo_text || settings?.site_name || 'BD Shop';
   const logoImage = settings?.header_logo_image || null;
   const tagline = settings?.header_tagline || 'Bangladesh Official';
@@ -148,8 +165,15 @@ export function Header() {
       {announcement && (
         <div className="w-full bg-slate-900 text-white text-[11px] py-1.5 px-4 hidden sm:flex items-center justify-between border-b border-slate-800">
           <div className="container mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2 truncate text-slate-300">
-              <span className="font-medium truncate">{announcement}</span>
+            <div className="flex items-center gap-3 truncate text-slate-300">
+              {announcement && <span className="font-medium truncate">{announcement}</span>}
+              <Link 
+                href="/p/exclusive-offer" 
+                className="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 font-black transition-colors shrink-0"
+              >
+                <Flame className="w-3.5 h-3.5 fill-amber-400 animate-bounce" />
+                <span>{mounted && locale === 'bn' ? '🔥 মেগা অফার ও এক্সক্লুসিভ ডিল দেখুন →' : '🔥 Exclusive Mega Deals →'}</span>
+              </Link>
             </div>
             <div className="flex items-center gap-4 text-slate-400 font-medium flex-shrink-0">
               {hotline && (
@@ -355,19 +379,15 @@ export function Header() {
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Light / Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2.5 neu-btn rounded-2xl text-muted-foreground hover:text-foreground transition-all cursor-pointer shadow-sm"
-              title="Toggle Light/Dark Theme"
-              aria-label="Toggle Theme"
+            {/* Exclusive Deals Highlight Badge Button (Visible on PC & Tablet) */}
+            <Link
+              href="/p/exclusive-offer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white shadow-md hover:opacity-95 hover:scale-[1.02] active:scale-95 transition-all shrink-0"
+              title="Exclusive Deals & Offers"
             >
-              {mounted && theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400 fill-amber-400/20 animate-spin-slow" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-500 fill-indigo-500/20" />
-              )}
-            </button>
+              <Flame className="w-3.5 h-3.5 fill-white text-white animate-bounce" />
+              <span>{mounted && locale === 'bn' ? 'এক্সক্লুসিভ অফার' : 'Exclusive Deals'}</span>
+            </Link>
 
             {/* Language Switcher */}
             <button
