@@ -122,20 +122,26 @@ export function Header() {
 
   const rawNavLinks = settings?.header_nav_links || defaultNavLinks;
   const navLinks = useMemo(() => {
-    if (!Array.isArray(rawNavLinks)) return defaultNavLinks;
-    const hasExclusive = rawNavLinks.some((l: any) => l.href === '/p/exclusive-offer');
+    const list = Array.isArray(rawNavLinks) && rawNavLinks.length > 0 ? rawNavLinks : defaultNavLinks;
+    const seen = new Set<string>();
+    const unique = list.filter((l: any) => {
+      if (!l?.href) return false;
+      if (seen.has(l.href)) return false;
+      seen.add(l.href);
+      return true;
+    });
+
+    const hasExclusive = unique.some((l: any) => l.href === '/p/exclusive-offer');
     if (!hasExclusive) {
-      const copy = [...rawNavLinks];
-      copy.splice(1, 0, {
+      unique.splice(1, 0, {
         href: '/p/exclusive-offer',
         labelKey: 'nav.exclusive_deals',
         labelEn: 'Exclusive Deals',
         labelBn: 'এক্সক্লুসিভ অফার',
         isHot: true,
       });
-      return copy;
     }
-    return rawNavLinks;
+    return unique;
   }, [rawNavLinks]);
   const siteName = settings?.header_logo_text || settings?.site_name || 'BD Shop';
   const logoImage = settings?.header_logo_image || null;
@@ -167,13 +173,6 @@ export function Header() {
           <div className="container mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3 truncate text-slate-300">
               {announcement && <span className="font-medium truncate">{announcement}</span>}
-              <Link 
-                href="/p/exclusive-offer" 
-                className="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 font-black transition-colors shrink-0"
-              >
-                <Flame className="w-3.5 h-3.5 fill-amber-400 animate-bounce" />
-                <span>{mounted && locale === 'bn' ? '🔥 মেগা অফার ও এক্সক্লুসিভ ডিল দেখুন →' : '🔥 Exclusive Mega Deals →'}</span>
-              </Link>
             </div>
             <div className="flex items-center gap-4 text-slate-400 font-medium flex-shrink-0">
               {hotline && (
@@ -379,15 +378,6 @@ export function Header() {
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Exclusive Deals Highlight Badge Button (Visible on PC & Tablet) */}
-            <Link
-              href="/p/exclusive-offer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white shadow-md hover:opacity-95 hover:scale-[1.02] active:scale-95 transition-all shrink-0"
-              title="Exclusive Deals & Offers"
-            >
-              <Flame className="w-3.5 h-3.5 fill-white text-white animate-bounce" />
-              <span>{mounted && locale === 'bn' ? 'এক্সক্লুসিভ অফার' : 'Exclusive Deals'}</span>
-            </Link>
 
             {/* Language Switcher */}
             <button
